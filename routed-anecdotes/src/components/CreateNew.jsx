@@ -1,10 +1,10 @@
-import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useField } from '../hooks/index'
 
 const CreateNew = ({ addNew }) => {
-  const [content, setContent] = useState("")
-  const [author, setAuthor] = useState("")
-  const [info, setInfo] = useState("")
+  const { value: content, onChange: setContent } = useField("text")
+  const { value: author, onChange: setAuthor } = useField("text")
+  const { value: info, onChange: setInfo } = useField("text")
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -22,7 +22,7 @@ const CreateNew = ({ addNew }) => {
           <input
             name="content"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => setContent(e)}
           />
         </div>
         <div>
@@ -30,7 +30,7 @@ const CreateNew = ({ addNew }) => {
           <input
             name="author"
             value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            onChange={(e) => setAuthor(e)}
           />
         </div>
         <div>
@@ -38,7 +38,7 @@ const CreateNew = ({ addNew }) => {
           <input
             name="info"
             value={info}
-            onChange={(e) => setInfo(e.target.value)}
+            onChange={(e) => setInfo(e)}
           />
         </div>
         <button>create</button>
