@@ -2,16 +2,17 @@ import { useNavigate } from "react-router-dom"
 import { useField } from '../hooks/index'
 
 const CreateNew = ({ addNew }) => {
-  const { value: content, onChange: setContent } = useField("text")
-  const { value: author, onChange: setAuthor } = useField("text")
-  const { value: info, onChange: setInfo } = useField("text")
+  const content = useField("text")
+  const author = useField("text")
+  const info = useField("text")
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    addNew({ content, author, info, votes: 0 })
+    addNew({ content: content.inputprops.value, author: author.inputprops.value, info: info.inputprops.value, votes: 0 })
     navigate("/")
   }
+
 
   return (
     <div>
@@ -20,28 +21,28 @@ const CreateNew = ({ addNew }) => {
         <div>
           content
           <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e)}
+            {...content.inputprops}
           />
         </div>
         <div>
           author
           <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e)}
+            {...author.inputprops}
           />
         </div>
         <div>
           url for more info
           <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e)}
+            {...info.inputprops}
           />
         </div>
         <button>create</button>
+        <button
+          onClick={() => {
+            content.reset()
+            author.reset()
+            info.reset()
+          }}>reset</button>
       </form>
     </div>
   )
