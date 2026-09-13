@@ -32,8 +32,14 @@ export const useAnecdotes = () => {
     setAnecdotes(anecdotes.concat(reutrnedAnecdote))
   }
 
+  const deleteAnecdote = async (id) => {
+    const deletedAnecdote = await anecdoteService.remove(id)
+    setAnecdotes(anecdotes.filter(a => a.id === deletedAnecdote.id ? null : a))
+  }
+
   return {
     anecdotes,
     addAnecdote,
+    deleteAnecdote,
   }
 }
