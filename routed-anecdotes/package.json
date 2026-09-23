@@ -9,8 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "json-server --port 3001 db.json",
-    "server:test": "json-server --port 3002  db.json",
-    "start:test": "vite"
+    "server:test": "npx json-server --port 3002 --watch db-test.json",
+    "start:test": "VITE_API_URL=http://localhost:3002/anecdotes vite"
   },
   "dependencies": {
     "react": "^19.2.8",

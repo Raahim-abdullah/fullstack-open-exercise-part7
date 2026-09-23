@@ -1,0 +1,33 @@
+{
+  "anecdotes": [
+    {
+      "content": "an anecdote created by playwright 1790143817019",
+      "author": "Playwright",
+      "info": "https://playwright.dev",
+      "votes": 0,
+      "id": "VtkqvY-NHT4"
+    },
+    {
+      "content": "an anecdote created by playwright 1790143823977",
+      "author": "Playwright",
+      "info": "https://playwright.dev",
+      "votes": 0,
+      "id": "fzTOQMKzqNI"
+    },
+    {
+      "content": "an anecdote created by playwright 1790143829587",
+      "author": "Playwright",
+      "info": "https://playwright.dev",
+      "votes": 0,
+      "id": "FZU-LVzTohE"
+    },
+    {
+      "content": "an anecdote created by playwright 1790144195201",
+      "author": "Playwright",
+      "info": "https://playwright.dev",
+      "votes": 0,
+      "id": "paN-cq4F500"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
