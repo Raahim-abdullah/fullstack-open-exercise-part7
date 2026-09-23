@@ -1,6 +1,7 @@
 node_modules/
 dist/
 coverage/
+react-from-scratch/
 
 # Local environment files
 .env
