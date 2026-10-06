@@ -27,21 +27,22 @@ import BlogList from "./components/BlogList"
 import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
 
-import { useNotificationAction } from "./store"
+import { useNotificationAction, useBlogs, useBlogsAction } from "./store"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useBlogs()
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
   const { setNotification } = useNotificationAction()
+  const { initialize } = useBlogsAction()
+
+  const setBlogs = () => { }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-    )
-  }, [])
+    initialize()
+  }, [initialize])
 
   useEffect(() => {
     const loggedUserJson = window.localStorage.getItem("loggedBlogAppUser")
@@ -80,22 +81,6 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (newBlog) => {
-    try {
-      const returnedBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(returnedBlog).sort((a, b) => b.likes - a.likes))
-      navigate("/")
-      setNotification(
-        `a new blog ${newBlog.title} by ${newBlog.author} added.`,
-        "success"
-      )
-    } catch (error) {
-      setNotification(
-        error.response.data.error,
-        "error"
-      )
-    }
-  }
 
   const handleLike = async (newBlog) => {
     try {
@@ -180,7 +165,6 @@ const App = () => {
           } />
           <Route path="/create" element={
             <BlogForm
-              addBlog={addBlog}
             />
           }
           />

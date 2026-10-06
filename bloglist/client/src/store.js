@@ -1,5 +1,31 @@
 import { create } from "zustand"
 
+import blogService from "./services/blogs"
+
+const useBlogStore = create((set) => ({
+  blogs: [],
+  actions: {
+    initialize: async () => {
+      const blogs = await blogService.getAll()
+      set({ blogs })
+    },
+    create: async (newBlog) => {
+      try {
+        const returnedBlog = await blogService.create(newBlog)
+        useNotificationStore.getState().actions.setNotification(
+          `a new blog ${returnedBlog.title} by ${returnedBlog.author} added.`,
+          "success"
+        )
+        set((state) => ({ blogs: state.blogs.concat(returnedBlog) }))
+      } catch (error) {
+        useNotificationStore.getState().actions.setNotification(
+          error.response.data.error,
+          "error"
+        )
+      }
+    }
+  }
+}))
 
 const useNotificationStore = create((set) => ({
   notification: {
@@ -17,6 +43,9 @@ const useNotificationStore = create((set) => ({
   }
 })
 )
+
+export const useBlogs = () => useBlogStore(state => state.blogs)
+export const useBlogsAction = () => useBlogStore(state => state.actions)
 
 export const useNotification = () => useNotificationStore(state => state.notification)
 export const useNotificationAction = () => useNotificationStore(state => state.actions)
