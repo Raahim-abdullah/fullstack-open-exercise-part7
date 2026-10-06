@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { useUsers } from "../store"
 
 import {
@@ -11,7 +12,7 @@ import {
   Paper
 } from "@mui/material"
 
-const Users = () => {
+const ListUsers = () => {
   const users = useUsers()
   return (
     <>
@@ -28,7 +29,7 @@ const Users = () => {
           <TableBody>
             {users.map(user =>
               <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
+                <TableCell><Link to={`/users/${user.id}`}>{user.name}</Link></TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.blogs.length}</TableCell>
               </TableRow>
@@ -40,4 +41,4 @@ const Users = () => {
   )
 }
 
-export default Users
+export default ListUsers

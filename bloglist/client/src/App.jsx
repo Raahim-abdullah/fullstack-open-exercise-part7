@@ -23,12 +23,14 @@ import Blog from "./components/Blog"
 import BlogList from "./components/BlogList"
 import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
-import Users from "./components/Users"
+import ListUsers from "./components/ListUsers"
+import User from "./components/User"
 
-import { useBlogs, useBlogsAction, useUser, useLoginAction, useUserAction } from "./store"
+import { useBlogs, useBlogsAction, useUser, useLoginAction, useUserAction, useUsers } from "./store"
 
 const App = () => {
   const blogs = useBlogs()
+  const users = useUsers()
   const user = useUser()
   const { initialize } = useBlogsAction()
   const { initialUser, logout } = useLoginAction()
@@ -40,10 +42,15 @@ const App = () => {
     getUsers()
   }, [initialize, initialUser, getUsers])
 
-  const match = useMatch("/blogs/:id")
 
-  const blog = match
-    ? blogs.find(blog => blog.id === match.params.id)
+  const matchBlog = useMatch("/blogs/:id")
+  const blog = matchBlog
+    ? blogs.find(blog => blog.id === matchBlog.params.id)
+    : null
+
+  const matchUser = useMatch("/users/:id")
+  const selectedUser = matchUser
+    ? users.find(u => u.id === matchUser.params.id)
     : null
 
   const style = {
@@ -103,11 +110,17 @@ const App = () => {
           } />
 
           <Route path="/users" element={
-            <Users />
+            <ListUsers />
+          } />
+
+          <Route path="/users/:id" element={
+            <User
+              user={selectedUser} />
           } />
 
           <Route path="*" element={
-            <NotFound />
+            <NotFound
+            />
           } />
         </Routes>
       </ErrorBoundary>
