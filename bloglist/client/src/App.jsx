@@ -38,8 +38,6 @@ const App = () => {
   const { setNotification } = useNotificationAction()
   const { initialize } = useBlogsAction()
 
-  const setBlogs = () => { }
-
   useEffect(() => {
     initialize()
   }, [initialize])
@@ -79,35 +77,6 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.clear()
     setUser(null)
-  }
-
-
-  const handleLike = async (newBlog) => {
-    try {
-      const updatedBlog = await blogService.update(newBlog)
-      setBlogs(blogs.map(blog => blog.id === newBlog.id ? { ...blog, likes: updatedBlog.likes } : blog).sort((a, b) => b.likes - a.likes))
-    } catch (error) {
-      setNotification(
-        error.response.data.error,
-        "error"
-      )
-    }
-  }
-
-  const handleRemove = async (blog) => {
-    try {
-      await blogService.deleteBlog(blog)
-      setBlogs(blogs.filter(b => b.id !== blog.id).sort((a, b) => b.likes - a.likes))
-      setNotification(
-        `you have deleted ${blog.title} by ${blog.author}.`,
-        "success"
-      )
-    } catch (error) {
-      setNotification(
-        error.response.data.error,
-        "error"
-      )
-    }
   }
 
   const match = useMatch("/blogs/:id")
@@ -159,8 +128,6 @@ const App = () => {
             <Blog
               blog={blog}
               user={user}
-              like={handleLike}
-              remove={handleRemove}
             />
           } />
           <Route path="/create" element={

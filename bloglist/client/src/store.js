@@ -23,6 +23,32 @@ const useBlogStore = create((set) => ({
           "error"
         )
       }
+    },
+    like: async (newBlog) => {
+      try {
+        const updatedBlog = await blogService.update(newBlog)
+        set((state) => ({ blogs: state.blogs.map(blog => blog.id === updatedBlog.id ? { ...blog, likes: updatedBlog.likes } : blog) }))
+      } catch (error) {
+        useNotificationStore.getState().actions.setNotification(
+          error.response.data.error,
+          "error"
+        )
+      }
+    },
+    remove: async (blog) => {
+      try {
+        await blogService.deleteBlog(blog)
+        set((state) => ({ blogs: state.blogs.filter(b => b.id !== blog.id) }))
+        useNotificationStore.getState().actions.setNotification(
+          `you have deleted ${blog.title} by ${blog.author}.`,
+          "success"
+        )
+      } catch (error) {
+        useNotificationStore.getState().actions.setNotification(
+          error.response.data.error,
+          "error"
+        )
+      }
     }
   }
 }))

@@ -8,15 +8,19 @@ import {
 } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 
-const Blog = ({ blog, user, like, remove }) => {
+import { useBlogsAction } from "../store"
+
+const Blog = ({ blog, user }) => {
+  const { like, remove } = useBlogsAction()
   const navigate = useNavigate()
+
+
   const handleLike = () => {
     const newBlog = { ...blog, likes: blog.likes + 1 }
     like(newBlog)
   }
 
   const ifUserIsOwner = () => {
-    console.log(user.id, blog.user.id)
     return user.id === blog.user.id
   }
 
