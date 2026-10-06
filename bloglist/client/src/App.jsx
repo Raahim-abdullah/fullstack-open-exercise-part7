@@ -23,22 +23,22 @@ import Blog from "./components/Blog"
 import BlogList from "./components/BlogList"
 import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
+import Users from "./components/Users"
 
-import { useBlogs, useBlogsAction, useUser, useUserAction } from "./store"
+import { useBlogs, useBlogsAction, useUser, useLoginAction, useUserAction } from "./store"
 
 const App = () => {
   const blogs = useBlogs()
   const user = useUser()
   const { initialize } = useBlogsAction()
-  const { initialUser, logout } = useUserAction()
+  const { initialUser, logout } = useLoginAction()
+  const { getUsers } = useUserAction()
 
   useEffect(() => {
     initialize()
-  }, [initialize])
-
-  useEffect(() => {
     initialUser()
-  }, [initialUser])
+    getUsers()
+  }, [initialize, initialUser, getUsers])
 
   const match = useMatch("/blogs/:id")
 
@@ -60,6 +60,9 @@ const App = () => {
             </Typography>
             <Button color="inherit" component={Link} to="/" sx={style}>
               Blogs
+            </Button>
+            <Button color="inherit" component={Link} to="/users" sx={style}>
+              users
             </Button>
             {!user
               ?
@@ -97,6 +100,10 @@ const App = () => {
           />
           <Route path="/login" element={
             <LoginForm />
+          } />
+
+          <Route path="/users" element={
+            <Users />
           } />
 
           <Route path="*" element={

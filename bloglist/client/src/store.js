@@ -2,6 +2,7 @@ import { create } from "zustand"
 
 import blogService from "./services/blogs"
 import loginService from "./services/login"
+import userService from "./services/users"
 
 const useBlogStore = create((set) => ({
   blogs: [],
@@ -71,7 +72,7 @@ const useNotificationStore = create((set) => ({
 })
 )
 
-const useUserStore = create((set) => ({
+const useLoginStore = create((set) => ({
   user: null,
   actions: {
     initialUser: () => {
@@ -106,11 +107,24 @@ const useUserStore = create((set) => ({
   }
 }))
 
+const useUserStore = create((set) => ({
+  users: [],
+  actions: {
+    getUsers: async () => {
+      const users = await userService.getAll()
+      set({ users })
+    }
+  }
+}))
+
 export const useBlogs = () => useBlogStore(state => state.blogs)
 export const useBlogsAction = () => useBlogStore(state => state.actions)
 
 export const useNotification = () => useNotificationStore(state => state.notification)
 export const useNotificationAction = () => useNotificationStore(state => state.actions)
 
-export const useUser = () => useUserStore(state => state.user)
+export const useUser = () => useLoginStore(state => state.user)
+export const useLoginAction = () => useLoginStore(state => state.actions)
+
+export const useUsers = () => useUserStore(state => state.users)
 export const useUserAction = () => useUserStore(state => state.actions)
