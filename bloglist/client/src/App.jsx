@@ -27,16 +27,15 @@ import BlogList from "./components/BlogList"
 import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
 
+import { useNotificationAction } from "./store"
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
-  const [notification, setNotification] = useState({
-    message: null,
-    type: "error"
-  })
+  const { setNotification } = useNotificationAction()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -62,25 +61,17 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       navigate("/")
-      setNotification({
-        message: `${username} is logged in.`,
-        type: "success"
-      })
+      setNotification(
+        `${username} is logged in.`,
+        "success"
+      )
       setUsername("")
       setPassword("")
-      setTimeout(() => {
-        setNotification({ ...notification, message: null })
-      }, 3000)
     } catch (error) {
       console.error(error.response.data.error)
-      setNotification({
-        message: error.response.data.error,
-        type: "error"
-      })
-      setTimeout(() => {
-        setNotification({ ...notification, message: null })
-      }, 3000)
-
+      setNotification(
+        error.response.data.error,
+        "error")
     }
   }
 
@@ -94,21 +85,15 @@ const App = () => {
       const returnedBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(returnedBlog).sort((a, b) => b.likes - a.likes))
       navigate("/")
-      setNotification({
-        message: `a new blog ${newBlog.title} by ${newBlog.author} added.`,
-        type: "success"
-      })
-      setTimeout(() => {
-        setNotification({ ...notification, message: null })
-      }, 3000)
+      setNotification(
+        `a new blog ${newBlog.title} by ${newBlog.author} added.`,
+        "success"
+      )
     } catch (error) {
-      setNotification({
-        message: error.response.data.error,
-        type: "error"
-      })
-      setTimeout(() => {
-        setNotification({ ...notification, message: null })
-      }, 3000)
+      setNotification(
+        error.response.data.error,
+        "error"
+      )
     }
   }
 
@@ -117,7 +102,10 @@ const App = () => {
       const updatedBlog = await blogService.update(newBlog)
       setBlogs(blogs.map(blog => blog.id === newBlog.id ? { ...blog, likes: updatedBlog.likes } : blog).sort((a, b) => b.likes - a.likes))
     } catch (error) {
-      console.log(error)
+      setNotification(
+        error.response.data.error,
+        "error"
+      )
     }
   }
 
@@ -125,22 +113,15 @@ const App = () => {
     try {
       await blogService.deleteBlog(blog)
       setBlogs(blogs.filter(b => b.id !== blog.id).sort((a, b) => b.likes - a.likes))
-      setNotification({
-        message: `you have deleted ${blog.title} by ${blog.author}.`,
-        type: "success"
-      })
-      setTimeout(() => {
-        setNotification({ message: null, type: "error" })
-      }, 3000)
+      setNotification(
+        `you have deleted ${blog.title} by ${blog.author}.`,
+        "success"
+      )
     } catch (error) {
-      setNotification({
-        message: error.response.data.error,
-        type: "error"
-      })
-      setTimeout(() => {
-        setNotification({ ...notification, message: null })
-      }, 3000)
-
+      setNotification(
+        error.response.data.error,
+        "error"
+      )
     }
   }
 
@@ -183,7 +164,7 @@ const App = () => {
           </Toolbar>
         </AppBar>
       </Box>
-      <Notification message={notification.message} type={notification.type} />
+      <Notification />
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={
