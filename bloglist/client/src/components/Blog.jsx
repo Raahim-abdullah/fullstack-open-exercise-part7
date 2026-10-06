@@ -6,14 +6,14 @@ import {
   Link,
   Box
 } from "@mui/material"
-import { useNavigate } from "react-router-dom"
 
+import { useNavigate } from "react-router-dom"
 import { useBlogsAction } from "../store"
 
 const Blog = ({ blog, user }) => {
+
   const { like, remove } = useBlogsAction()
   const navigate = useNavigate()
-
 
   const handleLike = () => {
     const newBlog = { ...blog, likes: blog.likes + 1 }
@@ -24,6 +24,7 @@ const Blog = ({ blog, user }) => {
     return user.id === blog.user.id
   }
 
+  if (!blog) return <Typography>Loading...</Typography>
   return (
     <Card sx={{ mb: 2 }}>
       <CardContent>

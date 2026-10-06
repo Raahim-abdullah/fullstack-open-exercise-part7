@@ -1,6 +1,19 @@
-import { TextField, Button } from "@mui/material"
-const LoginForm = ({ handleSubmit, username, setUsername, password, setPassword }) => {
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useUserAction } from "../store"
 
+import { TextField, Button } from "@mui/material"
+const LoginForm = () => {
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const { login } = useUserAction()
+  const navigate = useNavigate()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    login({ username, password })
+    navigate("/")
+  }
   return (
     <div>
       <h2>Log in to application</h2>

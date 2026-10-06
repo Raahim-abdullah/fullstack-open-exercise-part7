@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react"
-import blogService from "./services/blogs"
-import loginService from "./services/login"
+import { useEffect } from "react"
 
 import {
   Container,
@@ -16,7 +14,6 @@ import {
   Route,
   Link,
   useMatch,
-  useNavigate
 } from "react-router-dom"
 
 import Notification from "./components/Notification"
@@ -27,57 +24,21 @@ import BlogList from "./components/BlogList"
 import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
 
-import { useNotificationAction, useBlogs, useBlogsAction } from "./store"
+import { useBlogs, useBlogsAction, useUser, useUserAction } from "./store"
 
 const App = () => {
   const blogs = useBlogs()
-  const [user, setUser] = useState(null)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const navigate = useNavigate()
-  const { setNotification } = useNotificationAction()
+  const user = useUser()
   const { initialize } = useBlogsAction()
+  const { initialUser, logout } = useUserAction()
 
   useEffect(() => {
     initialize()
   }, [initialize])
 
   useEffect(() => {
-    const loggedUserJson = window.localStorage.getItem("loggedBlogAppUser")
-    if (loggedUserJson) {
-      const user = JSON.parse(loggedUserJson)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
-
-  const handleLogin = async (e) => {
-    e.preventDefault()
-
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      navigate("/")
-      setNotification(
-        `${username} is logged in.`,
-        "success"
-      )
-      setUsername("")
-      setPassword("")
-    } catch (error) {
-      console.error(error.response.data.error)
-      setNotification(
-        error.response.data.error,
-        "error")
-    }
-  }
-
-  const handleLogout = () => {
-    window.localStorage.clear()
-    setUser(null)
-  }
+    initialUser()
+  }, [initialUser])
 
   const match = useMatch("/blogs/:id")
 
@@ -110,7 +71,7 @@ const App = () => {
                 <Button color="inherit" component={Link} to="/create" sx={style}>
                   new blog
                 </Button>
-                <Button color="inherit" sx={style} onClick={handleLogout}>
+                <Button color="inherit" sx={style} onClick={logout}>
                   logout
                 </Button>
               </>
@@ -131,18 +92,11 @@ const App = () => {
             />
           } />
           <Route path="/create" element={
-            <BlogForm
-            />
+            <BlogForm />
           }
           />
           <Route path="/login" element={
-            <LoginForm
-              handleSubmit={handleLogin}
-              username={username}
-              setUsername={setUsername}
-              password={password}
-              setPassword={setPassword}
-            />
+            <LoginForm />
           } />
 
           <Route path="*" element={
