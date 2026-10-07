@@ -18,6 +18,14 @@ jobs:
         working-directory: bloglist
         run: npm ci
 
+      - name: Install server dependencies
+        working-directory: bloglist/server
+        run: npm ci
+
+      - name: Install test dependencies
+        working-directory: bloglist-tests
+        run: npm ci
+
       - name: Install test dependencies
         working-directory: bloglist-tests
         run: npm ci
