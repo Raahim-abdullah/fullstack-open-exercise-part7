@@ -51,6 +51,11 @@ const useBlogStore = create((set) => ({
           "error"
         )
       }
+    },
+    getBlogComments: async (id) => {
+      const comments = await blogService.getAllComments(id)
+      console.log(comments)
+      return await comments
     }
   }
 }))

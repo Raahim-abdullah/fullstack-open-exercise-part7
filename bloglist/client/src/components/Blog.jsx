@@ -9,11 +9,23 @@ import {
 
 import { useNavigate } from "react-router-dom"
 import { useBlogsAction } from "../store"
+import { useEffect, useState } from "react"
 
 const Blog = ({ blog, user }) => {
-
-  const { like, remove } = useBlogsAction()
+  const { like, remove, getBlogComments } = useBlogsAction()
   const navigate = useNavigate()
+  const [comments, setCommets] = useState([])
+
+  useEffect(() => {
+    if (blog) {
+      const fetchComments = async () => {
+        const comments = await getBlogComments(blog.id)
+        setCommets(comments)
+      }
+
+      fetchComments()
+    }
+  }, [blog, getBlogComments])
 
   const handleLike = () => {
     const newBlog = { ...blog, likes: blog.likes + 1 }
@@ -83,6 +95,21 @@ const Blog = ({ blog, user }) => {
               Remove
             </Button>
           )}
+        </Box>
+
+        <Box
+          sx={{
+            alignItems: "center",
+            gap: 1,
+            mt: 2
+          }}
+        >
+          <Typography variant="h5">Comments</Typography>
+          {comments.length === 0
+            ? <Typography variant="caption">no comments made yat.</Typography>
+            : <ul>
+              {comments.map(comment => <li key={comment.id}>{comment.comment}</li>)}
+            </ul>}
         </Box>
 
       </CardContent>

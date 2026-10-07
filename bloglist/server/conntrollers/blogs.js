@@ -2,6 +2,7 @@ const blogRouter = require("express").Router()
 const middleware = require("../utils/middleware")
 const Blog = require("../models/blog")
 const User = require("../models/user")
+const Comment = require("../models/comment")
 
 
 blogRouter.get('/', async (request, response) => {
@@ -79,5 +80,26 @@ blogRouter.put("/:id", middleware.userExtractor, async (request, response) => {
   return response.json(updateBlog)
 })
 
+blogRouter.get("/:id/comments", async (request, response) => {
+  const comments = await Comment.find({ blog: request.params.id })
+  return response.json(comments)
+})
+
+blogRouter.post("/:id/comments", async (request, response) => {
+  const body = request.body
+
+  if (!body.comment) {
+    return response.status(400).json({
+      error: "comment missing"
+    })
+  }
+
+  const comment = new Comment({
+    comment: body.comment,
+    blog: request.params.id
+  })
+  const newComment = await comment.save()
+  return response.json(newComment)
+})
 
 module.exports = blogRouter
