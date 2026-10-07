@@ -12,22 +12,28 @@ import { useNavigate } from "react-router-dom"
 import { useBlogsAction } from "../store"
 import { useEffect, useState } from "react"
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog, user, isLoading }) => {
   const { like, remove, getBlogComments, addComment } = useBlogsAction()
   const navigate = useNavigate()
-  const [comments, setCommets] = useState([])
-  const [comment, setCommet] = useState("")
+  const [comments, setComments] = useState([])
+  const [comment, setComment] = useState("")
 
   useEffect(() => {
     if (blog) {
       const fetchComments = async () => {
         const comments = await getBlogComments(blog.id)
-        setCommets(comments)
+        setComments(comments)
       }
 
       fetchComments()
     }
   }, [blog, getBlogComments])
+
+  if (isLoading) return (<Typography variant="h5">Loading...</Typography>)
+
+  if (!blog) {
+    throw new Error("Blog not found")
+  }
 
   const handleLike = () => {
     const newBlog = { ...blog, likes: blog.likes + 1 }
@@ -41,11 +47,10 @@ const Blog = ({ blog, user }) => {
   const handleComment = async (e) => {
     e.preventDefault()
     const newComment = await addComment(blog.id, comment)
-    setCommets(comments.concat(newComment))
-    setCommet("")
+    setComments(comments.concat(newComment))
+    setComment("")
   }
 
-  if (!blog) return <Typography>Loading...</Typography>
   return (
     <Card sx={{ mb: 2 }}>
       <CardContent>
@@ -58,7 +63,7 @@ const Blog = ({ blog, user }) => {
           color="text.secondary"
           sx={{ mt: 1 }}
         >
-          Added by {blog.username}
+          Added by {blog.user.name}
         </Typography>
 
         <Link
@@ -118,11 +123,11 @@ const Blog = ({ blog, user }) => {
             <TextField
               label="comment"
               value={comment}
-              onChange={({ target }) => setCommet(target.value)}
+              onChange={({ target }) => setComment(target.value)}
               sx={{ flexGrow: 1 }}
               required
             />
-            <Button variant="contained">Add Comment</Button>
+            <Button variant="contained" type="submit">Add Comment</Button>
           </Box>
           {comments.length === 0
             ? <Typography variant="caption">no comments made yat.</Typography>

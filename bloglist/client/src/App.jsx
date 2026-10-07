@@ -15,6 +15,7 @@ import {
   Link,
   useMatch,
 } from "react-router-dom"
+import { useState } from "react"
 
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
@@ -30,6 +31,7 @@ import { useBlogs, useBlogsAction, useUser, useLoginAction, useUserAction, useUs
 
 const App = () => {
   const blogs = useBlogs()
+  const [isLoading, setIsLoading] = useState(true)
   const users = useUsers()
   const user = useUser()
   const { initialize } = useBlogsAction()
@@ -37,9 +39,12 @@ const App = () => {
   const { getUsers } = useUserAction()
 
   useEffect(() => {
-    initialize()
-    initialUser()
-    getUsers()
+    const loadData = async () => {
+      await Promise.all([initialize(), initialUser(), getUsers()])
+      setIsLoading(false)
+    }
+
+    loadData()
   }, [initialize, initialUser, getUsers])
 
 
@@ -66,7 +71,7 @@ const App = () => {
               Blog List
             </Typography>
             <Button color="inherit" component={Link} to="/" sx={style}>
-              Blogs
+              blogs
             </Button>
             <Button color="inherit" component={Link} to="/users" sx={style}>
               users
@@ -96,11 +101,9 @@ const App = () => {
             <BlogList blogs={blogs} />
           } />
           <Route path="/blogs/:id" element={
-            <Blog
-              blog={blog}
-              user={user}
-            />
-          } />
+            <Blog blog={blog} user={user} isLoading={isLoading} />
+          }
+          />
           <Route path="/create" element={
             <BlogForm />
           }
