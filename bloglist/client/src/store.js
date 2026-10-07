@@ -56,6 +56,22 @@ const useBlogStore = create((set) => ({
       const comments = await blogService.getAllComments(id)
       console.log(comments)
       return await comments
+    },
+    addComment: async (id, comment) => {
+      try {
+        const newComment = await blogService.addComment(id, comment)
+        useNotificationStore.getState().actions.setNotification(
+          "you have commented.",
+          "success"
+        )
+        return await newComment
+      } catch (error) {
+        useNotificationStore.getState().actions.setNotification(
+          error.response.data.error,
+          "error"
+        )
+
+      }
     }
   }
 }))

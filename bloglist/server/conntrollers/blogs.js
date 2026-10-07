@@ -85,7 +85,7 @@ blogRouter.get("/:id/comments", async (request, response) => {
   return response.json(comments)
 })
 
-blogRouter.post("/:id/comments", async (request, response) => {
+blogRouter.post("/:id/comments", middleware.requestLogger, async (request, response) => {
   const body = request.body
 
   if (!body.comment) {

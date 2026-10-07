@@ -4,7 +4,8 @@ import {
   Typography,
   Button,
   Link,
-  Box
+  Box,
+  TextField
 } from "@mui/material"
 
 import { useNavigate } from "react-router-dom"
@@ -12,9 +13,10 @@ import { useBlogsAction } from "../store"
 import { useEffect, useState } from "react"
 
 const Blog = ({ blog, user }) => {
-  const { like, remove, getBlogComments } = useBlogsAction()
+  const { like, remove, getBlogComments, addComment } = useBlogsAction()
   const navigate = useNavigate()
   const [comments, setCommets] = useState([])
+  const [comment, setCommet] = useState("")
 
   useEffect(() => {
     if (blog) {
@@ -34,6 +36,13 @@ const Blog = ({ blog, user }) => {
 
   const ifUserIsOwner = () => {
     return user.id === blog.user.id
+  }
+
+  const handleComment = async (e) => {
+    e.preventDefault()
+    const newComment = await addComment(blog.id, comment)
+    setCommets(comments.concat(newComment))
+    setCommet("")
   }
 
   if (!blog) return <Typography>Loading...</Typography>
@@ -105,6 +114,16 @@ const Blog = ({ blog, user }) => {
           }}
         >
           <Typography variant="h5">Comments</Typography>
+          <Box component="form" sx={{ display: "flex", width: 400 }} onSubmit={handleComment}>
+            <TextField
+              label="comment"
+              value={comment}
+              onChange={({ target }) => setCommet(target.value)}
+              sx={{ flexGrow: 1 }}
+              required
+            />
+            <Button variant="contained">Add Comment</Button>
+          </Box>
           {comments.length === 0
             ? <Typography variant="caption">no comments made yat.</Typography>
             : <ul>
